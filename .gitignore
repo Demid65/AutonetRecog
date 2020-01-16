@@ -1,0 +1,8 @@
+
+cublas64_100.dll
+cudart64_100.dll
+cudnn64_7.dll
+cufft64_100.dll
+curand64_100.dll
+cusolver64_100.dll
+cusparse64_100.dll

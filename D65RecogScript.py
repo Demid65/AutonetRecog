@@ -171,6 +171,7 @@ def CurrFrame():
         Recog(False)
     if key==ord('c'):
         print(str(hue2cid(avg_hue(frame))))
+    return frame
 
 def Shutdown():
     cv2.destroyAllWindows()
@@ -180,7 +181,6 @@ def Shutdown():
     exit()
 
 def ReconnectLoop():
-    LT=time.clock()
     print('waiting for connection')
     isConn=False
     while not isConn:
@@ -261,7 +261,7 @@ if SM:
 
 while(True):
     c = cv2.waitKey(1)
-    CurrFrame()
+    frame = CurrFrame()
     c = ''
     try:
         c = conn.recv(64)
@@ -275,7 +275,7 @@ while(True):
     if c == b' ':
         Recog(True)
     if c == b'c':
-        conn.send(str(hue2cid(avg_hue(frame))).encode)
+        conn.send(str(hue2cid(avg_hue(frame))).encode())
 
     
  

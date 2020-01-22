@@ -169,6 +169,8 @@ def CurrFrame():
         Shutdown()
     if key==ord(' '):
         Recog(False)
+    if key==ord('c'):
+        print(str(hue2cid(avg_hue(frame))))
 
 def Shutdown():
     cv2.destroyAllWindows()
@@ -264,7 +266,7 @@ while(True):
     try:
         c = conn.recv(64)
     except socket.timeout:
-	    a=1
+	    conn = ReconnectLoop()
     except ConnectionResetError:
         print('Connection lost')
         cv2.destroyAllWindows()
@@ -272,9 +274,8 @@ while(True):
         #print('timeout') 				
     if c == b' ':
         Recog(True)
-					
-		
-            
+    if c == b'c':
+        conn.send(str(hue2cid(avg_hue(frame))).encode)
 
     
  

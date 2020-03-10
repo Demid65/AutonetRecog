@@ -102,41 +102,18 @@ def Recog(sending):
             #sys.stdout.write(str(card_id2send)+'r')
             if sending:
                 conn.send((str(card_id2send)+'r').encode())
-            if SM:
-                ser.write('(1)[51]<DigitalWrite>'.encode())
-                ser.write('(0)[52]<DigitalWrite>'.encode())
-                ser.write('(0)[53]<DigitalWrite>'.encode())
-                ser.write('(0)[13]<DigitalWrite>'.encode())
-
-			
          elif color_id==1:
             #sys.stdout.write(str(card_id2send)+'b')
             if sending:
                 conn.send((str(card_id2send)+'b').encode())
-            if SM:
-                ser.write('(0)[51]<DigitalWrite>'.encode())
-                ser.write('(1)[52]<DigitalWrite>'.encode())
-                ser.write('(0)[53]<DigitalWrite>'.encode())
-                ser.write('(0)[13]<DigitalWrite>'.encode())
-
          elif color_id==2:
             #sys.stdout.write(str(card_id2send)+'g')
             if sending:
                 conn.send((str(card_id2send)+'g').encode())
-            if SM:
-                ser.write('(0)[51]<DigitalWrite>'.encode())
-                ser.write('(0)[52]<DigitalWrite>'.encode())
-                ser.write('(1)[53]<DigitalWrite>'.encode())
-                ser.write('(0)[13]<DigitalWrite>'.encode())
          elif color_id==3:
             #sys.stdout.write(str(card_id2send)+'y')
             if sending:
                 conn.send((str(card_id2send)+'y').encode())
-            if SM:
-                ser.write('(1)[51]<DigitalWrite>'.encode())
-                ser.write('(1)[52]<DigitalWrite>'.encode())
-                ser.write('(0)[53]<DigitalWrite>'.encode())
-                ser.write('(0)[13]<DigitalWrite>'.encode())
          elif color_id==4:
             if sending:
                 conn.send((str(card_id2send)+'o').encode())    
@@ -193,8 +170,6 @@ def ReconnectLoop():
     print('connection from ',addr)
     conn.settimeout(0.1)
     return conn
-    
-
 
 ## Load the label map.
 label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
@@ -251,13 +226,6 @@ sock.listen(1)
 sock.settimeout(0.1)
 conn=ReconnectLoop()
 #conn.setblocking(False)
-if SM:
-    ser=serial.Serial('COM31')
-    ser.write('(0)[51]<PinMode>'.encode())
-    ser.write('[52]<PinMode>'.encode())
-    ser.write('[53]<PinMode>'.encode())
-    ser.write('[13]<PinMode>'.encode())
-    ser.write('(1)[13]<DigitalWrite>'.encode())
 
 while(True):
     c = cv2.waitKey(1)
@@ -276,8 +244,3 @@ while(True):
         Recog(True)
     if c == b'c':
         conn.send(str(hue2cid(avg_hue(frame))).encode())
-
-    
- 
- 
-		

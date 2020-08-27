@@ -6,3 +6,6 @@ cufft64_100.dll
 curand64_100.dll
 cusolver64_100.dll
 cusparse64_100.dll
+utils/__pycache__/__init__.cpython-37.pyc
+utils/__pycache__/label_map_util.cpython-37.pyc
+utils/__pycache__/visualization_utils.cpython-37.pyc

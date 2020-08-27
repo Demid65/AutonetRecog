@@ -1,2 +1,1 @@
-SET PATH=C:\ProgramData\Anaconda3\Library\bin;C:\ProgramData\Anaconda3;C:\ProgramData\Anaconda3\Scripts;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\bin;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v9.0\libnvvp;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;
 python "D65RecogScript.py"

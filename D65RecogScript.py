@@ -14,12 +14,6 @@ sys.path.append("..")
 from utils import label_map_util
 from utils import visualization_utils as vis_util
 
-
-
-
-
-
-
 # Name of the directory containing the object detection module we're using
 MODEL_NAME = 'models'
 
@@ -99,22 +93,23 @@ def Recog(sending):
          else:
              card_id2send=card_id
          if color_id==0:
-            #sys.stdout.write(str(card_id2send)+'r')
+            print(str(card_id2send)+'r')
             if sending:
                 conn.send((str(card_id2send)+'r').encode())
          elif color_id==1:
-            #sys.stdout.write(str(card_id2send)+'b')
+            print(str(card_id2send)+'b')
             if sending:
                 conn.send((str(card_id2send)+'b').encode())
          elif color_id==2:
-            #sys.stdout.write(str(card_id2send)+'g')
+            print(str(card_id2send)+'g')
             if sending:
                 conn.send((str(card_id2send)+'g').encode())
          elif color_id==3:
-            #sys.stdout.write(str(card_id2send)+'y')
+            print(str(card_id2send)+'y')
             if sending:
                 conn.send((str(card_id2send)+'y').encode())
          elif color_id==4:
+            print(str(card_id2send)+'o')
             if sending:
                 conn.send((str(card_id2send)+'o').encode())    
     else:
@@ -138,9 +133,15 @@ def Recog(sending):
     cv2.imshow('Object detector', frame)	
 
 
-def CurrFrame():
+def UpdateFrame():
     ret, frame = video.read()
-    cv2.imshow('current frame',frame)
+    ret2, frame2 = video2.read()
+    if (ret):
+        cv2.imshow('main cam',frame)
+    if (ret2):
+        cv2.imshow('traffic cam',frame2)
+        frame2c = frame2[100:400,100:400]
+        cv2.imshow('traffic cam cropped',frame2c)
     key=cv2.waitKey(1)
     if key==ord('q'):
         Shutdown()
@@ -148,7 +149,9 @@ def CurrFrame():
         Recog(False)
     if key==ord('c'):
         print(str(hue2cid(avg_hue(frame))))
-    return frame
+    if key==ord('t'):
+        print(str(hue2cid(avg_hue(frame2c))))		
+    return frame, frame2
 
 def Shutdown():
     cv2.destroyAllWindows()
@@ -166,7 +169,7 @@ def ReconnectLoop():
             isConn=True
         except socket.timeout:
             a=1
-        CurrFrame()
+        UpdateFrame()
     print('connection from ',addr)
     conn.settimeout(0.1)
     return conn
@@ -214,9 +217,16 @@ video = cv2.VideoCapture(0)
 video.set(cv2.CAP_PROP_BUFFERSIZE, 1);
 
 ret = video.set(3,640)
-ret = video.set(4,320)
-im_height=320
+ret = video.set(4,480)
+im_height=480
 im_width=640
+
+# Initialize 2nd webcam feed
+video2 = cv2.VideoCapture(1)
+video2.set(cv2.CAP_PROP_BUFFERSIZE, 1);
+
+ret2 = video.set(3,640)
+ret2 = video.set(4,480)
 
 a='a'
 SM=False
@@ -229,7 +239,7 @@ conn=ReconnectLoop()
 
 while(True):
     c = cv2.waitKey(1)
-    frame = CurrFrame()
+    frame, frame2 = UpdateFrame()
     c = ''
     try:
         c = conn.recv(64)
@@ -244,3 +254,5 @@ while(True):
         Recog(True)
     if c == b'c':
         conn.send(str(hue2cid(avg_hue(frame))).encode())
+    if c == b't':
+        conn.send(str(hue2cid(avg_hue(frame2))).encode())

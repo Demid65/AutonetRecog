@@ -65,9 +65,8 @@ def hue2cid(hue):     #0r 1b 2g 3y 4o
         cid=4
     return cid
 
-def Recog(sending):
-    print('starting recog')
-    ret, frame = video.read()
+def Recog(frame):
+    #ret, frame = video.read()
     frame_expanded = np.expand_dims(frame, axis=0)
 
     # Perform the actual detection by running the model with the image as input
@@ -75,7 +74,7 @@ def Recog(sending):
         [detection_boxes, detection_scores, detection_classes, num_detections],
         feed_dict={image_tensor: frame_expanded})
 
-    if np.take(scores,0) >0.5:
+    if np.take(scores,0) >9:
          card_id=int(np.take(classes,0))
          ymin=np.take(boxes,0)
          xmin=np.take(boxes,1)
@@ -83,7 +82,7 @@ def Recog(sending):
          xmax=np.take(boxes,3)
          (xminn, xmaxx, yminn, ymaxx) = (int(xmin * im_width), int(xmax * im_width), int(ymin * im_height), int(ymax * im_height))
          cropped_image = frame[yminn:ymaxx, xminn:xmaxx]
-         cv2.imshow('Cropped',cropped_image)
+         #cv2.imshow('Cropped',cropped_image)
          color_id=hue2cid(avg_hue(cropped_image))
          
          #print(avg_hue(cropped_image))
@@ -93,28 +92,21 @@ def Recog(sending):
              card_id2send=card_id
          if color_id==0:
             print(str(card_id2send)+'r')
-            if sending:
-                conn.send((str(card_id2send)+'r').encode())
+            toSend=(str(card_id2send)+'r').encode()
          elif color_id==1:
             print(str(card_id2send)+'b')
-            if sending:
-                conn.send((str(card_id2send)+'b').encode())
+            toSend=(str(card_id2send)+'b').encode()
          elif color_id==2:
             print(str(card_id2send)+'g')
-            if sending:
-                conn.send((str(card_id2send)+'g').encode())
+            toSend=(str(card_id2send)+'g').encode()
          elif color_id==3:
             print(str(card_id2send)+'y')
-            if sending:
-                conn.send((str(card_id2send)+'y').encode())
+            toSend=(str(card_id2send)+'y').encode()
          elif color_id==4:
             print(str(card_id2send)+'o')
-            if sending:
-                conn.send((str(card_id2send)+'o').encode())    
+            toSend=(str(card_id2send)+'o').encode()
     else:
-        print('Empty')
-        if sending:
-            conn.send('Empty'.encode())
+        toSend='Empty'.encode()
 
     # Draw the results of the detection (aka 'visulaize the results')
     vis_util.visualize_boxes_and_labels_on_image_array(
@@ -125,7 +117,7 @@ def Recog(sending):
         category_index,
         use_normalized_coordinates=True,
         line_thickness=8,
-        min_score_thresh=0.60)
+        min_score_thresh=0.9)
 
     
     # All the results have been drawn on the frame, so it's time to display it.
@@ -137,6 +129,7 @@ def UpdateFrame():
     ret2, frame2 = video2.read()
     if (ret):
         cv2.imshow('main cam',frame)
+        Recog(frame)
     if (ret2):
         cv2.imshow('traffic cam',frame2)
         frame2c = frame2[100:400,100:400]
@@ -144,8 +137,6 @@ def UpdateFrame():
     key=cv2.waitKey(1)
     if key==ord('q'):
         Shutdown()
-    if key==ord(' '):
-        Recog(False)
     if key==ord('c'):
         print(str(hue2cid(avg_hue(frame))))
     if key==ord('t'):
@@ -167,7 +158,7 @@ def ReconnectLoop():
             conn, addr=sock.accept()
             isConn=True
         except socket.timeout:
-            a=1
+            1
         UpdateFrame()
     print('connection from ',addr)
     conn.settimeout(0.1)
@@ -235,7 +226,7 @@ sock.listen(1)
 sock.settimeout(0.1)
 conn=ReconnectLoop()
 #conn.setblocking(False)
-
+Recog(frame)
 while(True):
     c = cv2.waitKey(1)
     frame, frame2 = UpdateFrame()
@@ -243,14 +234,13 @@ while(True):
     try:
         c = conn.recv(64)
     except socket.timeout:
-	    conn = ReconnectLoop()
+	    1
     except ConnectionResetError:
         print('Connection lost')
-        cv2.destroyAllWindows()
         conn = ReconnectLoop()
         #print('timeout') 				
     if c == b' ':
-        Recog(True)
+        conn.send(toSend)
     if c == b'c':
         conn.send(str(hue2cid(avg_hue(frame))).encode())
     if c == b't':

@@ -3,7 +3,6 @@ import os
 import cv2
 import numpy as np
 import tensorflow as tf
-import serial
 import socket
 import time
 import sys
@@ -256,3 +255,5 @@ while(True):
         conn.send(str(hue2cid(avg_hue(frame))).encode())
     if c == b't':
         conn.send(str(hue2cid(avg_hue(frame2))).encode())
+    if с == b'q':
+        Shutdown()

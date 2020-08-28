@@ -243,17 +243,18 @@ while(True):
     try:
         c = conn.recv(64)
     except socket.timeout:
-	    conn = ReconnectLoop()
+        print('Job done, disconnecting')
+        conn = ReconnectLoop()
     except ConnectionResetError:
         print('Connection lost')
         cv2.destroyAllWindows()
         conn = ReconnectLoop()
-        #print('timeout') 				
+        #print('timeout')		
     if c == b' ':
         Recog(True)
     if c == b'c':
         conn.send(str(hue2cid(avg_hue(frame))).encode())
     if c == b't':
         conn.send(str(hue2cid(avg_hue(frame2))).encode())
-    if с == b'q':
+    if c == b'q':
         Shutdown()

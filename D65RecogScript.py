@@ -75,7 +75,7 @@ def Recog(sending):
         [detection_boxes, detection_scores, detection_classes, num_detections],
         feed_dict={image_tensor: frame_expanded})
 
-    if np.take(scores,0) >0.5:
+    if np.take(scores,0) >0.9:
          card_id=int(np.take(classes,0))
          ymin=np.take(boxes,0)
          xmin=np.take(boxes,1)
@@ -125,7 +125,7 @@ def Recog(sending):
         category_index,
         use_normalized_coordinates=True,
         line_thickness=8,
-        min_score_thresh=0.60)
+        min_score_thresh=0.90)
 
     
     # All the results have been drawn on the frame, so it's time to display it.

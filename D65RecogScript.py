@@ -234,7 +234,8 @@ while(True):
     try:
         c = conn.recv(64)
     except socket.timeout:
-	    1
+        print('Job done, disconnecting')
+        conn = ReconnectLoop()
     except ConnectionResetError:
         print('Connection lost')
         conn = ReconnectLoop()
@@ -245,5 +246,5 @@ while(True):
         conn.send(str(hue2cid(avg_hue(frame))).encode())
     if c == b't':
         conn.send(str(hue2cid(avg_hue(frame2))).encode())
-    if с == b'q':
+    if c == b'q':
         Shutdown()

@@ -108,7 +108,8 @@ def Recog(frame):
             print(str(card_id2send)+' orange')
             toSend=str(card_id2send)+'o'
     else:
-        toSend='Empty'
+        cardNum=None
+
         if hue2cid(avg_hue(frame2c))==2:
             print('Traffic light is grin')
         else:

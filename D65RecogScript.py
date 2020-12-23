@@ -213,7 +213,7 @@ num_detections = detection_graph.get_tensor_by_name('num_detections:0')
 video = cv2.VideoCapture(0)
 # ret = video.set(3,1280)
 # ret = video.set(4,720)
-video.set(cv2.CAP_PROP_BUFFERSIZE, 1);
+video.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
 ret = video.set(3,640)
 ret = video.set(4,480)
@@ -222,7 +222,7 @@ im_width=640
 
 # Initialize 2nd webcam feed
 video2 = cv2.VideoCapture(1)
-video2.set(cv2.CAP_PROP_BUFFERSIZE, 1);
+video2.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 
 ret2 = video.set(3,640)
 ret2 = video.set(4,480)

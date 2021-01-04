@@ -25,7 +25,7 @@ class recogThread(Thread):
         self.im_width = 640
         self.im_height = 480
 
-        ## Load the label map.
+        # Load the label map.
         self.label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
         self.categories = label_map_util.convert_label_map_to_categories(self.label_map, max_num_classes=NUM_CLASSES,
                                                                     use_display_name=True)
@@ -71,7 +71,7 @@ class recogThread(Thread):
                 feed_dict={self.image_tensor: frame_expanded})
 
             if np.take(scores, 0) > 0.9:
-                cardNum = int(np.take(classes, 0))
+                globalDefs.cardNum = int(np.take(classes, 0))
                 ymin = np.take(boxes, 0)
                 xmin = np.take(boxes, 1)
                 ymax = np.take(boxes, 2)
@@ -79,11 +79,11 @@ class recogThread(Thread):
                 (xminn, xmaxx, yminn, ymaxx) = (
                     int(xmin * self.im_width), int(xmax * self.im_width), int(ymin * self.im_height), int(ymax * self.im_height))
                 cropped_image = frame[yminn:ymaxx, xminn:xmaxx]
-                cardCID = rgbTools.hue2cid(rgbTools.avg_hue(cropped_image))
+                globalDefs.CardCID = rgbTools.hue2cid(rgbTools.avg_hue(cropped_image))
             else:
-                cardNum = None
+                globalDefs.cardNum = None
 
-            # Draw the results of the detection (aka 'visulaize the results')
+            # Draw the results of the detection
             vis_util.visualize_boxes_and_labels_on_image_array(
                 frame,
                 np.squeeze(boxes),

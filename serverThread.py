@@ -30,7 +30,7 @@ class serverThread(Thread):
                 try:
                     c = self.conn.recv(64)
                     if c:
-                        print('Server thread: ' + c + ' was received')
+                        print('Server thread: ' + c.decode() + ' was received')
                     if c == b' ':
                         if globalDefs.cardNum:
                             card_id = globalDefs.cardNum
@@ -49,15 +49,16 @@ class serverThread(Thread):
                                  toSend = str(card_id2send) + 'y'
                             elif color_id == 4:
                                 toSend = str(card_id2send) + 'o'
-                            else:
-                                toSend = 'Empty'
+                        else:
+                            toSend = 'Empty'
                             print('Server thread: '+toSend+' was sent')
-                            self.conn.send(toSend)
+                        self.conn.send(toSend.encode())
                     if c == b'l':
-                            self.conn.send(globalDefs.lineVal)
+                            self.conn.send(str(globalDefs.lineVal).encode())
+                            print('Server thread: ' + str(globalDefs.lineVal) + ' was sent')
                 except socket.timeout:
-                    a = 1
-                    #print('No command received')
+                    print('Server thread: SocketTimeout')
+                    self.ReconnectLoop()
                 except ConnectionResetError:
                     print('Server thread: ConnectionResetError')
                     self.ReconnectLoop()
